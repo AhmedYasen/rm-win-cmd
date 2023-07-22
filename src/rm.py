@@ -2,6 +2,8 @@ import os
 import shutil
 import logging
 import sys
+import glob
+
 
 
 def remove_directory(dir_path):
@@ -47,12 +49,18 @@ def confirm_content_delete(path):
                  f"contents (Y/n): ")
 
 
+def parse_paths_with_wildcards(paths_list):
+    matched_files = []
+    for path in paths_list:
+        matched_files.extend(glob.glob(path))
+    return matched_files
+
 class RmCmd:
     def __init__(self, args):
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
         self.recursive = args.recursive
         self.force = args.force
-        self.paths = args.paths
+        self.paths = parse_paths_with_wildcards(args.paths)
         self.handle_command()
 
     def check_content_deletion(self, path):
